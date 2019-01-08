@@ -61,7 +61,7 @@ xd = dest_coords(1);
 yd = dest_coords(2);
 
 % Evaluate Heuristic function, H, for each grid cell
-% Manhattan distance
+% Manhattan distance (Note from LeeChan:H is computed in advance)
 H = abs(X - xd) + abs(Y - yd);
 H = H';
 % Initialize cost arrays
@@ -109,12 +109,66 @@ while true
     % ALL YOUR CODE BETWEEN THESE LINES OF STARS
     % Visit all of the neighbors around the current node and update the
     % entries in the map, f, g and parent arrays
-    %
     
+    ni = 0; nj = 0; % Id of neighbor of current node
     
+    % Visit up neighbor
+    if (i > 1)
+        ni = i - 1;
+        nj = j;
+        if (map(ni, nj) ~= 2 && map(ni, nj) ~= 3 && map(ni, nj)~= 5) % If vertex not in closed list (3) (Note: may be or not be in open list (4))
+            if g(i, j) + 1 + H(ni, nj) < g(ni, nj) % If new f value < existing f value, or there is no existing f value (g(ni, nj) = Inf)
+                g(ni, nj) = g(i, j) + 1; % Calculate distance from start (g)
+                f(ni, nj) = g(ni, nj) + H(ni, nj); % Update f value: f = g + h
+                map(ni, nj) = 4; % Add vertex to open list
+                parent(ni, nj) = current; % Set parent to be the current vertex
+            end
+        end
+    end
+    % Visit down neighbor
+    if (i < nrows)
+        ni = i + 1;
+        nj = j;
+        if (map(ni, nj) ~= 2 && map(ni, nj) ~= 3 && map(ni, nj)~= 5)
+            if g(i, j) + 1 + H(ni, nj) < g(ni, nj)
+                g(ni, nj) = g(i, j) + 1;
+                f(ni, nj) = g(ni, nj) + H(ni, nj);
+                map(ni, nj) = 4;
+                parent(ni, nj) = current;
+            end
+        end
+    end
+    % Visit left neighbor
+    if (j > 1)
+        ni = i;
+        nj = j - 1;
+        if (map(ni, nj) ~= 2 && map(ni, nj) ~= 3 && map(ni, nj)~= 5)
+            if g(i, j) + 1 + H(ni, nj) < g(ni, nj)
+                g(ni, nj) = g(i, j) + 1;
+                f(ni, nj) = g(ni, nj) + H(ni, nj);
+                map(ni, nj) = 4;
+                parent(ni, nj) = current;
+            end
+        end
+    end
+    % Visit right neighbor
+    if (j < ncols)
+        ni = i;
+        nj = j + 1;
+        if (map(ni, nj) ~= 2 && map(ni, nj) ~= 3 && map(ni, nj)~= 5)
+            if g(i, j) + 1 + H(ni, nj) < g(ni, nj)
+                g(ni, nj) = g(i, j) + 1;
+                f(ni, nj) = g(ni, nj) + H(ni, nj);
+                map(ni, nj) = 4;
+                parent(ni, nj) = current;
+            end
+        end
+    end
     
+    numExpanded = numExpanded + 1;
     
-    
+    % Add current node to closed list (visited)
+    map(current) = 3; 
     %*********************************************************************
     
     
