@@ -19,7 +19,7 @@ function roadmap = PRM (RandomSample, Dist, LocalPlanner, nsamples, k)
 %   nsamples : The number of random samples to generate
 %
 %   k : The number of neighbors that should be considered in
-%        forming the roadmap graph.
+%        forming the roa    dmap graph.
 %
 % Output :
 %   roadmap - a structure the samples, the edges and edge lengths in the
@@ -57,15 +57,23 @@ for i = 2:nsamples
     % distance between the new sample and each of the samples that has been
     % generated so far in the program.
     distances = Dist(x, samples(:,1:(i-1)));
+
+    length_n = length(distances);
+    [sorted_distances, index_distances] = sort(distances);
+
+    for ii = 1: min(k, length_n)
+        j = index_distances(ii);
+        if (LocalPlanner(x, samples(:,j)))
+            nedges = nedges + 1;
+            edges(nedges,:) = [length_n+1, j];
+            edge_lengths(nedges) = sorted_distances(ii);
+        end
+    end
     
-    %%% YOUR CODE HERE
-    %
     % Find the closest k samples, use the LocalPlanner function to see if
     % you can forge an edge to any of these samples and update the edges,
     % edge_lengths and nedges variables accordingly.
     %
-    
-    
     
     fprintf (1, 'nsamples = %d, nedges = %d\n', i, nedges);
    
